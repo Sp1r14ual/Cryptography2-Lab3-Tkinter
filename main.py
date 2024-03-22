@@ -84,7 +84,7 @@ class HashApp:
 
         original_hash = hashlib.md5(message.encode()).hexdigest()
 
-        for i in range(len(message) * 8):
+        for i in range(len(message)):  # * 8
             modified_message = self.modify_bit(message, i, bit_position)
             #print(modified_message)
             modified_hash = hashlib.md5(modified_message.encode()).hexdigest()
