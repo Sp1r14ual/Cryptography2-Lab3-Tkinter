@@ -53,7 +53,10 @@ class HashApp:
                 self.message_text.insert(tk.END, message)
 
     def compute_hash(self):
-        message = self.message_text.get(1.0, tk.END)
+        message = self.message_text.get(1.0, tk.END).translate(dict.fromkeys(range(32))).strip()
+
+        print(message, len(message))
+
         hash_value = hashlib.md5(message.encode()).hexdigest()
         self.hash_value.config(state="normal")
         self.hash_value.delete(0, tk.END)
@@ -68,7 +71,7 @@ class HashApp:
                 file.write(hash_value)
 
     def explore_avalanche(self):
-        message = self.message_text.get(1.0, tk.END).strip()
+        message = self.message_text.get(1.0, tk.END).translate(dict.fromkeys(range(32))).strip()
         bit_position = int(self.bit_position_entry.get())
 
         if not message:
