@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-import hashlib
+# import hashlib
+from md5 import md5
 import matplotlib.pyplot as plt
 
 class HashApp:
@@ -57,7 +58,8 @@ class HashApp:
 
         print(message, len(message))
 
-        hash_value = hashlib.md5(message.encode()).hexdigest()
+        # hash_value = hashlib.md5(message.encode()).hexdigest()
+        hash_value = md5(message)
         self.hash_value.config(state="normal")
         self.hash_value.delete(0, tk.END)
         self.hash_value.insert(tk.END, hash_value)
@@ -85,12 +87,14 @@ class HashApp:
         rounds = []
         changed_bits = []
 
-        original_hash = hashlib.md5(message.encode()).hexdigest()
+        # original_hash = hashlib.md5(message.encode()).hexdigest()
+        original_hash = md5(message)
 
         for i in range(len(message)):  # * 8
             modified_message = self.modify_bit(message, i, bit_position)
             #print(modified_message)
-            modified_hash = hashlib.md5(modified_message.encode()).hexdigest()
+            # modified_hash = hashlib.md5(modified_message.encode()).hexdigest()
+            modified_hash = md5(modified_message)
 
             changed_bits_count = self.count_changed_bits(original_hash, modified_hash)
             rounds.append(i + 1)
