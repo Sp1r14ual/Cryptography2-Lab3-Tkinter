@@ -55,6 +55,11 @@ class HashApp:
 
     def compute_hash(self):
         message = self.message_text.get(1.0, tk.END).translate(dict.fromkeys(range(32))).strip()
+
+        if not message:
+            messagebox.showerror("Error", "Please enter a message.")
+            return
+
         hash_value = hashlib.md5(message.encode()).hexdigest()
         # hash_value = md5(message)
         self.hash_value.config(state="normal")
