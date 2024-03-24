@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-# import hashlib
+import hashlib
 from md5 import md5
 import matplotlib.pyplot as plt
 
@@ -55,11 +55,8 @@ class HashApp:
 
     def compute_hash(self):
         message = self.message_text.get(1.0, tk.END).translate(dict.fromkeys(range(32))).strip()
-
-        print(message, len(message))
-
-        # hash_value = hashlib.md5(message.encode()).hexdigest()
-        hash_value = md5(message)
+        hash_value = hashlib.md5(message.encode()).hexdigest()
+        # hash_value = md5(message)
         self.hash_value.config(state="normal")
         self.hash_value.delete(0, tk.END)
         self.hash_value.insert(tk.END, hash_value)
@@ -84,24 +81,9 @@ class HashApp:
             messagebox.showerror("Error", "Bit position out of range.")
             return
 
-        rounds = []
-        changed_bits = []
+        modified_message = self.flip_bit(message, bit_position)
 
-        # original_hash = hashlib.md5(message.encode()).hexdigest()
-        original_hash = md5(message)
-
-        for i in range(len(message)):  # * 8
-            modified_message = self.modify_bit(message, i, bit_position)
-            #print(modified_message)
-            # modified_hash = hashlib.md5(modified_message.encode()).hexdigest()
-            modified_hash = md5(modified_message)
-
-            changed_bits_count = self.count_changed_bits(original_hash, modified_hash)
-            rounds.append(i + 1)
-            changed_bits.append(changed_bits_count)
-
-        print("Round =", rounds)
-        print("Changed bits =", changed_bits)
+        rounds, changed_bits = zip(*md5(message, modified_message))
 
         plt.figure(figsize=(4, 3))
         plt.plot(rounds, changed_bits)
@@ -113,15 +95,16 @@ class HashApp:
 
         self.display_graph("avalanche_effect.png")
 
-    def modify_bit(self, message, byte_index, bit_index):
-        if byte_index >= len(message):
-            return message
-        modified_message = bytearray(message, 'utf-8')
-        byte = modified_message[byte_index]
-        modified_byte = byte ^ (1 << (7 - bit_index))
-        modified_message[byte_index] = modified_byte
-        # return bytes(modified_message)
-        return modified_message.decode("utf-8")
+    def flip_bit(self, message, bit_pos):
+        char_index, bit_index = bit_pos // 7, bit_pos % 7
+        binary_message = [format(ord(x), 'b') for x in message]
+
+        modified_char = binary_message[char_index][:bit_index] + str(int(binary_message[char_index][bit_index]) ^ 1) + binary_message[char_index][bit_index + 1:]
+
+        binary_message[char_index] = modified_char
+
+        return ''.join(chr(int(x, base=2)) for x in binary_message)
+
 
     def count_changed_bits(self, hash1, hash2):
         count = 0
