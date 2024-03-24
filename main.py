@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 class HashApp:
     def __init__(self, master):
         self.master = master
-        master.title("Hash Function App")
+        master.title("MD5")
 
         self.message_label = tk.Label(master, text="Message:")
         self.message_label.grid(row=0, column=0, sticky="w")
@@ -71,7 +71,12 @@ class HashApp:
 
     def explore_avalanche(self):
         message = self.message_text.get(1.0, tk.END).translate(dict.fromkeys(range(32))).strip()
-        bit_position = int(self.bit_position_entry.get())
+
+        try:
+            bit_position = int(self.bit_position_entry.get())
+        except:
+            messagebox.showerror("Error", "Incorrect bit position entered")
+            return
 
         if not message:
             messagebox.showerror("Error", "Please enter a message.")
